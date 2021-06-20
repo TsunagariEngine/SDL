@@ -1175,7 +1175,7 @@ SDL_MapSurface(SDL_Surface * src, SDL_Surface * dst)
     }
 
     /* Choose your blitters wisely */
-    return (SDL_CalculateBlit(src));
+    return 0;
 }
 
 void
