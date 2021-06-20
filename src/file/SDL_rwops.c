@@ -835,9 +835,7 @@ SDL_RWFromFile(const char *file, const char *mode)
     rwops->type = SDL_RWOPS_VITAFILE;
 #elif HAVE_STDIO_H
     {
-        #ifdef __APPLE__
-        FILE *fp = SDL_OpenFPFromBundleOrFallback(file, mode);
-        #elif __WINRT__
+        #if __WINRT__
         FILE *fp = NULL;
         fopen_s(&fp, file, mode);
         #else

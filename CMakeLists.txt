@@ -107,7 +107,6 @@ if(APPLE)
         ${HERE}/src/audio/coreaudio/SDL_coreaudio.m
         ${HERE}/src/core/unix/SDL_poll.c
         ${HERE}/src/core/unix/SDL_poll.c
-        ${HERE}/src/file/cocoa/SDL_rwopsbundlesupport.m
         ${HERE}/src/loadso/dlopen/SDL_sysloadso.c
         ${HERE}/src/render/metal/SDL_render_metal.m
         ${HERE}/src/render/opengl/SDL_render_gl.c
