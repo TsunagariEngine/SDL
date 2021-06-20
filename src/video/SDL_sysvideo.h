@@ -320,9 +320,6 @@ struct SDL_VideoDevice
     /* Hit-testing */
     int (*SetWindowHitTest)(SDL_Window * window, SDL_bool enabled);
 
-    /* Tell window that app enabled drag'n'drop events */
-    void (*AcceptDragAndDrop)(SDL_Window * window, SDL_bool accept);
-
     /* * * */
     /* Data common to all drivers */
     SDL_bool is_dummy;

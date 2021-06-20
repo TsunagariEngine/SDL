@@ -1117,12 +1117,6 @@ SDL_EventState(Uint32 type, int state)
 #endif
     }
 
-    /* turn off drag'n'drop support if we've disabled the events.
-       This might change some UI details at the OS level. */
-    if (isdnd) {
-        SDL_ToggleDragAndDropSupport();
-    }
-
     return current_state;
 }
 

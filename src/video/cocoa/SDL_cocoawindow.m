@@ -58,17 +58,13 @@
 #define NSAppKitVersionNumber10_14 1671
 #endif
 
-@interface SDLWindow : NSWindow <NSDraggingDestination>
+@interface SDLWindow : NSWindow
 /* These are needed for borderless/fullscreen windows */
 - (BOOL)canBecomeKeyWindow;
 - (BOOL)canBecomeMainWindow;
 - (void)sendEvent:(NSEvent *)event;
 - (void)doCommandBySelector:(SEL)aSelector;
 
-/* Handle drag-and-drop of files onto the SDL window. */
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender;
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender;
-- (BOOL)wantsPeriodicDraggingUpdates;
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem;
 
 - (SDL_Window*)findSDLWindow;
@@ -128,82 +124,6 @@
 - (void)doCommandBySelector:(SEL)aSelector
 {
     /*NSLog(@"doCommandBySelector: %@\n", NSStringFromSelector(aSelector));*/
-}
-
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
-{
-    if (([sender draggingSourceOperationMask] & NSDragOperationGeneric) == NSDragOperationGeneric) {
-        return NSDragOperationGeneric;
-    }
-
-    return NSDragOperationNone; /* no idea what to do with this, reject it. */
-}
-
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
-{ @autoreleasepool
-{
-    NSPasteboard *pasteboard = [sender draggingPasteboard];
-    NSArray *types = [NSArray arrayWithObject:NSFilenamesPboardType];
-    NSString *desiredType = [pasteboard availableTypeFromArray:types];
-    SDL_Window *sdlwindow = [self findSDLWindow];
-
-    if (desiredType == nil) {
-        return NO;  /* can't accept anything that's being dropped here. */
-    }
-
-    NSData *data = [pasteboard dataForType:desiredType];
-    if (data == nil) {
-        return NO;
-    }
-
-    SDL_assert([desiredType isEqualToString:NSFilenamesPboardType]);
-    NSArray *array = [pasteboard propertyListForType:@"NSFilenamesPboardType"];
-
-    /* Code addon to update the mouse location */
-    NSPoint point = [sender draggingLocation];
-    SDL_Mouse *mouse = SDL_GetMouse();
-    int x = (int)point.x;
-    int y = (int)(sdlwindow->h - point.y);
-    if (x >= 0 && x < sdlwindow->w && y >= 0 && y < sdlwindow->h) {
-        SDL_SendMouseMotion(sdlwindow, mouse->mouseID, 0, x, y);
-    }
-    /* Code addon to update the mouse location */
-
-    for (NSString *path in array) {
-        NSURL *fileURL = [NSURL fileURLWithPath:path];
-        NSNumber *isAlias = nil;
-
-        [fileURL getResourceValue:&isAlias forKey:NSURLIsAliasFileKey error:nil];
-
-        /* If the URL is an alias, resolve it. */
-        if ([isAlias boolValue]) {
-            NSURLBookmarkResolutionOptions opts = NSURLBookmarkResolutionWithoutMounting | NSURLBookmarkResolutionWithoutUI;
-            NSData *bookmark = [NSURL bookmarkDataWithContentsOfURL:fileURL error:nil];
-            if (bookmark != nil) {
-                NSURL *resolvedURL = [NSURL URLByResolvingBookmarkData:bookmark
-                                                               options:opts
-                                                         relativeToURL:nil
-                                                   bookmarkDataIsStale:nil
-                                                                 error:nil];
-
-                if (resolvedURL != nil) {
-                    fileURL = resolvedURL;
-                }
-            }
-        }
-
-        if (!SDL_SendDropFile(sdlwindow, [[fileURL path] UTF8String])) {
-            return NO;
-        }
-    }
-
-    SDL_SendDropComplete(sdlwindow);
-    return YES;
-}}
-
-- (BOOL)wantsPeriodicDraggingUpdates
-{
-    return NO;
 }
 
 - (SDL_Window*)findSDLWindow
@@ -1992,17 +1912,6 @@ int
 Cocoa_SetWindowHitTest(SDL_Window * window, SDL_bool enabled)
 {
     return 0;  /* just succeed, the real work is done elsewhere. */
-}
-
-void
-Cocoa_AcceptDragAndDrop(SDL_Window * window, SDL_bool accept)
-{
-    SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
-    if (accept) {
-        [data->nswindow registerForDraggedTypes:[NSArray arrayWithObject:(NSString *)kUTTypeFileURL]];
-    } else {
-        [data->nswindow unregisterDraggedTypes];
-    }
 }
 
 int

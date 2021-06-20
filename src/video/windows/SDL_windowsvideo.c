@@ -175,7 +175,6 @@ WIN_CreateDevice(int devindex)
     device->DestroyWindowFramebuffer = WIN_DestroyWindowFramebuffer;
     device->OnWindowEnter = WIN_OnWindowEnter;
     device->SetWindowHitTest = WIN_SetWindowHitTest;
-    device->AcceptDragAndDrop = WIN_AcceptDragAndDrop;
     device->FlashWindow = WIN_FlashWindow;
 
     device->shape_driver.CreateShaper = Win32_CreateShaper;

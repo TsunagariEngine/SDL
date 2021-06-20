@@ -78,7 +78,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/cpuinfo/SDL_cpuinfo.c
     ${HERE}/src/events/SDL_clipboardevents.c
     ${HERE}/src/events/SDL_displayevents.c
-    ${HERE}/src/events/SDL_dropevents.c
     ${HERE}/src/events/SDL_events.c
     ${HERE}/src/events/SDL_keyboard.c
     ${HERE}/src/events/SDL_mouse.c

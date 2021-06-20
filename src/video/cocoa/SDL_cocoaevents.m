@@ -276,11 +276,6 @@ static void Cocoa_DispatchEvent(NSEvent *theEvent)
     SDL_SendLocaleChangedEvent();
 }
 
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
-{
-    return (BOOL)SDL_SendDropFile(NULL, [filename UTF8String]) && SDL_SendDropComplete(NULL);
-}
-
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
     /* The menu bar of SDL apps which don't have the typical .app bundle
@@ -301,13 +296,6 @@ static void Cocoa_DispatchEvent(NSEvent *theEvent)
     /* If we call this before NSApp activation, macOS might print a complaint
      * about ApplePersistenceIgnoreState. */
     [SDLApplication registerUserDefaults];
-}
-
-- (void)handleURLEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
-{
-    NSString* path = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
-    SDL_SendDropFile(NULL, [path UTF8String]);
-    SDL_SendDropComplete(NULL);
 }
 
 @end
