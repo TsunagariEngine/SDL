@@ -141,22 +141,6 @@
 
 /* Enable various audio drivers */
 #define SDL_AUDIO_DRIVER_COREAUDIO  1
-#define SDL_AUDIO_DRIVER_DISK   1
-#define SDL_AUDIO_DRIVER_DUMMY  1
-
-/* Enable various input drivers */
-#define SDL_JOYSTICK_HIDAPI 1
-#define SDL_JOYSTICK_IOKIT  1
-#define SDL_JOYSTICK_VIRTUAL    1
-#define SDL_HAPTIC_IOKIT    1
-
-/* The MFI controller support requires ARC Objective C runtime */
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !defined(__i386__)
-#define SDL_JOYSTICK_MFI 1
-#endif
-
-/* Enable the dummy sensor driver */
-#define SDL_SENSOR_DUMMY  1
 
 /* Enable various shared object loading systems */
 #define SDL_LOADSO_DLOPEN   1
@@ -170,40 +154,9 @@
 
 /* Enable various video drivers */
 #define SDL_VIDEO_DRIVER_COCOA  1
-#define SDL_VIDEO_DRIVER_DUMMY  1
-#undef SDL_VIDEO_DRIVER_X11
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC "/opt/X11/lib/libX11.6.dylib"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT "/opt/X11/lib/libXext.6.dylib"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XINERAMA "/opt/X11/lib/libXinerama.1.dylib"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XINPUT2 "/opt/X11/lib/libXi.6.dylib"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XRANDR "/opt/X11/lib/libXrandr.2.dylib"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XSS "/opt/X11/lib/libXss.1.dylib"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XVIDMODE "/opt/X11/lib/libXxf86vm.1.dylib"
-#define SDL_VIDEO_DRIVER_X11_XDBE 1
-#define SDL_VIDEO_DRIVER_X11_XINERAMA 1
-#define SDL_VIDEO_DRIVER_X11_XRANDR 1
-#define SDL_VIDEO_DRIVER_X11_XSCRNSAVER 1
-#define SDL_VIDEO_DRIVER_X11_XSHAPE 1
-#define SDL_VIDEO_DRIVER_X11_XVIDMODE 1
-#define SDL_VIDEO_DRIVER_X11_HAS_XKBKEYCODETOKEYSYM 1
-
-#ifdef MAC_OS_X_VERSION_10_8
-/*
- * No matter the versions targeted, this is the 10.8 or later SDK, so you have
- *  to use the external Xquartz, which is a more modern Xlib. Previous SDKs
- *  used an older Xlib.
- */
-#define SDL_VIDEO_DRIVER_X11_XINPUT2 1
-#define SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS 1
-#define SDL_VIDEO_DRIVER_X11_CONST_PARAM_XEXTADDDISPLAY 1
-#endif
 
 #ifndef SDL_VIDEO_RENDER_OGL
 #define SDL_VIDEO_RENDER_OGL    1
-#endif
-
-#ifndef SDL_VIDEO_RENDER_OGL_ES2
-#define SDL_VIDEO_RENDER_OGL_ES2 1
 #endif
 
 /* Metal only supported on 64-bit architectures with 10.11+ */
@@ -225,28 +178,11 @@
 #ifndef SDL_VIDEO_OPENGL
 #define SDL_VIDEO_OPENGL    1
 #endif
-#ifndef SDL_VIDEO_OPENGL_ES2
-#define SDL_VIDEO_OPENGL_ES2    1
-#endif
-#ifndef SDL_VIDEO_OPENGL_EGL
-#define SDL_VIDEO_OPENGL_EGL    1
-#endif
 #ifndef SDL_VIDEO_OPENGL_CGL
 #define SDL_VIDEO_OPENGL_CGL    1
 #endif
-#ifndef SDL_VIDEO_OPENGL_GLX
-#define SDL_VIDEO_OPENGL_GLX    1
-#endif
 
 /* Enable Vulkan and Metal support */
-#ifndef SDL_VIDEO_VULKAN
-#if SDL_PLATFORM_SUPPORTS_METAL
-#define SDL_VIDEO_VULKAN 1
-#else
-#define SDL_VIDEO_VULKAN 0
-#endif
-#endif
-
 #ifndef SDL_VIDEO_METAL
 #if SDL_PLATFORM_SUPPORTS_METAL
 #define SDL_VIDEO_METAL 1
@@ -254,12 +190,6 @@
 #define SDL_VIDEO_METAL 0
 #endif
 #endif
-
-/* Enable system power support */
-#define SDL_POWER_MACOSX 1
-
-/* enable filesystem support */
-#define SDL_FILESYSTEM_COCOA   1
 
 /* Enable assembly routines */
 #define SDL_ASSEMBLY_ROUTINES   1
