@@ -96,13 +96,6 @@ typedef enum
 -(void) rightMouseDragged:(NSEvent *) theEvent;
 -(void) otherMouseDragged:(NSEvent *) theEvent;
 -(void) scrollWheel:(NSEvent *) theEvent;
--(void) touchesBeganWithEvent:(NSEvent *) theEvent;
--(void) touchesMovedWithEvent:(NSEvent *) theEvent;
--(void) touchesEndedWithEvent:(NSEvent *) theEvent;
--(void) touchesCancelledWithEvent:(NSEvent *) theEvent;
-
-/* Touch event handling */
--(void) handleTouches:(NSTouchPhase) phase withEvent:(NSEvent*) theEvent;
 
 @end
 /* *INDENT-ON* */

@@ -32,7 +32,6 @@
 #include "../SDL_sysvideo.h"
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/SDL_mouse_c.h"
-#include "../../events/SDL_touch_c.h"
 #include "../../events/SDL_windowevents_c.h"
 #include "../../events/SDL_dropevents_c.h"
 #include "SDL_cocoavideo.h"
@@ -376,7 +375,7 @@ SetWindowStyle(SDL_Window * window, NSUInteger style)
 
     [view setNextResponder:self];
 
-    [view setAcceptsTouchEvents:YES];
+    [view setAcceptsTouchEvents:NO];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -1153,116 +1152,6 @@ SetWindowStyle(SDL_Window * window, NSUInteger style)
 - (void)scrollWheel:(NSEvent *)theEvent
 {
     Cocoa_HandleMouseWheel(_data->window, theEvent);
-}
-
-- (void)touchesBeganWithEvent:(NSEvent *) theEvent
-{
-    /* probably a MacBook trackpad; make this look like a synthesized event.
-       This is backwards from reality, but better matches user expectations. */
-    const BOOL istrackpad = ([theEvent subtype] == NSEventSubtypeMouseEvent);
-
-    NSSet *touches = [theEvent touchesMatchingPhase:NSTouchPhaseAny inView:nil];
-    const SDL_TouchID touchID = istrackpad ? SDL_MOUSE_TOUCHID : (SDL_TouchID)(intptr_t)[[touches anyObject] device];
-    int existingTouchCount = 0;
-
-    for (NSTouch* touch in touches) {
-        if ([touch phase] != NSTouchPhaseBegan) {
-            existingTouchCount++;
-        }
-    }
-    if (existingTouchCount == 0) {
-        int numFingers = SDL_GetNumTouchFingers(touchID);
-        DLog("Reset Lost Fingers: %d", numFingers);
-        for (--numFingers; numFingers >= 0; --numFingers) {
-            SDL_Finger* finger = SDL_GetTouchFinger(touchID, numFingers);
-            /* trackpad touches have no window. If we really wanted one we could
-             * use the window that has mouse or keyboard focus.
-             * Sending a null window currently also prevents synthetic mouse
-             * events from being generated from touch events.
-             */
-            SDL_Window *window = NULL;
-            SDL_SendTouch(touchID, finger->id, window, SDL_FALSE, 0, 0, 0);
-        }
-    }
-
-    DLog("Began Fingers: %lu .. existing: %d", (unsigned long)[touches count], existingTouchCount);
-    [self handleTouches:NSTouchPhaseBegan withEvent:theEvent];
-}
-
-- (void)touchesMovedWithEvent:(NSEvent *) theEvent
-{
-    [self handleTouches:NSTouchPhaseMoved withEvent:theEvent];
-}
-
-- (void)touchesEndedWithEvent:(NSEvent *) theEvent
-{
-    [self handleTouches:NSTouchPhaseEnded withEvent:theEvent];
-}
-
-- (void)touchesCancelledWithEvent:(NSEvent *) theEvent
-{
-    [self handleTouches:NSTouchPhaseCancelled withEvent:theEvent];
-}
-
-- (void)handleTouches:(NSTouchPhase) phase withEvent:(NSEvent *) theEvent
-{
-    NSSet *touches = [theEvent touchesMatchingPhase:phase inView:nil];
-
-    /* probably a MacBook trackpad; make this look like a synthesized event.
-       This is backwards from reality, but better matches user expectations. */
-    const BOOL istrackpad = ([theEvent subtype] == NSEventSubtypeMouseEvent);
-
-    for (NSTouch *touch in touches) {
-        const SDL_TouchID touchId = istrackpad ? SDL_MOUSE_TOUCHID : (SDL_TouchID)(intptr_t)[touch device];
-        SDL_TouchDeviceType devtype = SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE;
-
-        /* trackpad touches have no window. If we really wanted one we could
-         * use the window that has mouse or keyboard focus.
-         * Sending a null window currently also prevents synthetic mouse events
-         * from being generated from touch events.
-         */
-        SDL_Window *window = NULL;
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= 101202 /* Added in the 10.12.2 SDK. */
-        if ([touch respondsToSelector:@selector(type)]) {
-            /* TODO: Before implementing direct touch support here, we need to
-             * figure out whether the OS generates mouse events from them on its
-             * own. If it does, we should prevent SendTouch from generating
-             * synthetic mouse events for these touches itself (while also
-             * sending a window.) It will also need to use normalized window-
-             * relative coordinates via [touch locationInView:].
-             */
-            if ([touch type] == NSTouchTypeDirect) {
-                continue;
-            }
-        }
-#endif
-
-        if (SDL_AddTouch(touchId, devtype, "") < 0) {
-            return;
-        }
-
-        const SDL_FingerID fingerId = (SDL_FingerID)(intptr_t)[touch identity];
-        float x = [touch normalizedPosition].x;
-        float y = [touch normalizedPosition].y;
-        /* Make the origin the upper left instead of the lower left */
-        y = 1.0f - y;
-
-        switch (phase) {
-        case NSTouchPhaseBegan:
-            SDL_SendTouch(touchId, fingerId, window, SDL_TRUE, x, y, 1.0f);
-            break;
-        case NSTouchPhaseEnded:
-        case NSTouchPhaseCancelled:
-            SDL_SendTouch(touchId, fingerId, window, SDL_FALSE, x, y, 1.0f);
-            break;
-        case NSTouchPhaseMoved:
-            SDL_SendTouchMotion(touchId, fingerId, window, x, y, 1.0f);
-            break;
-        default:
-            break;
-        }
-    }
 }
 
 @end

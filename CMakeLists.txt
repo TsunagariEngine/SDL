@@ -84,7 +84,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/events/SDL_keyboard.c
     ${HERE}/src/events/SDL_mouse.c
     ${HERE}/src/events/SDL_quit.c
-    ${HERE}/src/events/SDL_touch.c
     ${HERE}/src/events/SDL_windowevents.c
     ${HERE}/src/file/SDL_rwops.c
     ${HERE}/src/render/SDL_render.c

@@ -486,8 +486,7 @@ SDL_VideoInit(const char *driver_name)
     /* Start the event loop */
     if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0 ||
         SDL_KeyboardInit() < 0 ||
-        SDL_MouseInit() < 0 ||
-        SDL_TouchInit() < 0) {
+        SDL_MouseInit() < 0) {
         return -1;
     }
 
@@ -3059,7 +3058,6 @@ SDL_VideoQuit(void)
     }
 
     /* Halt event processing before doing anything else */
-    SDL_TouchQuit();
     SDL_MouseQuit();
     SDL_KeyboardQuit();
     SDL_QuitSubSystem(SDL_INIT_EVENTS);

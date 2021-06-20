@@ -101,32 +101,6 @@ SDL_MouseRelativeSpeedScaleChanged(void *userdata, const char *name, const char 
     }
 }
 
-static void SDLCALL
-SDL_TouchMouseEventsChanged(void *userdata, const char *name, const char *oldValue, const char *hint)
-{
-    SDL_Mouse *mouse = (SDL_Mouse *)userdata;
-
-    mouse->touch_mouse_events = SDL_GetStringBoolean(hint, SDL_TRUE);
-}
-
-static void SDLCALL
-SDL_MouseTouchEventsChanged(void *userdata, const char *name, const char *oldValue, const char *hint)
-{
-    SDL_Mouse *mouse = (SDL_Mouse *)userdata;
-    SDL_bool default_value;
-
-#if defined(__ANDROID__) || (defined(__IPHONEOS__) && !defined(__TVOS__))
-    default_value = SDL_TRUE;
-#else
-    default_value = SDL_FALSE;
-#endif
-    mouse->mouse_touch_events = SDL_GetStringBoolean(hint, default_value);
-
-    if (mouse->mouse_touch_events) {
-        SDL_AddTouch(SDL_MOUSE_TOUCHID, SDL_TOUCH_DEVICE_DIRECT, "mouse_input");
-    }
-}
-
 /* Public functions */
 int
 SDL_MouseInit(void)
@@ -146,12 +120,6 @@ SDL_MouseInit(void)
 
     SDL_AddHintCallback(SDL_HINT_MOUSE_RELATIVE_SPEED_SCALE,
                         SDL_MouseRelativeSpeedScaleChanged, mouse);
-
-    SDL_AddHintCallback(SDL_HINT_TOUCH_MOUSE_EVENTS,
-                        SDL_TouchMouseEventsChanged, mouse);
-
-    SDL_AddHintCallback(SDL_HINT_MOUSE_TOUCH_EVENTS,
-                        SDL_MouseTouchEventsChanged, mouse);
 
     mouse->was_touch_mouse_events = SDL_FALSE; /* no touch to mouse movement event pending */
 
@@ -330,17 +298,6 @@ SDL_PrivateSendMouseMotion(SDL_Window * window, SDL_MouseID mouseID, int relativ
     int xrel;
     int yrel;
 
-    /* SDL_HINT_MOUSE_TOUCH_EVENTS: controlling whether mouse events should generate synthetic touch events */
-    if (mouse->mouse_touch_events) {
-        if (mouseID != SDL_TOUCH_MOUSEID && !relative && track_mouse_down) {
-            if (window) {
-                float fx = (float)x / (float)window->w;
-                float fy = (float)y / (float)window->h;
-                SDL_SendTouchMotion(SDL_MOUSE_TOUCHID, 0, window, fx, fy, 1.0f);
-            }
-        }
-    }
-
     /* SDL_HINT_TOUCH_MOUSE_EVENTS: if not set, discard synthetic mouse events coming from platform layer */
     if (mouse->touch_mouse_events == 0) {
         if (mouseID == SDL_TOUCH_MOUSEID) {
@@ -499,11 +456,6 @@ SDL_PrivateSendMouseButton(SDL_Window * window, SDL_MouseID mouseID, Uint8 state
                 track_mouse_down = SDL_TRUE;
             } else {
                 track_mouse_down = SDL_FALSE;
-            }
-            if (window) {
-                float fx = (float)mouse->x / (float)window->w;
-                float fy = (float)mouse->y / (float)window->h;
-                SDL_SendTouch(SDL_MOUSE_TOUCHID, 0, window, track_mouse_down, fx, fy, 1.0f);
             }
         }
     }
