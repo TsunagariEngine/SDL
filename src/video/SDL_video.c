@@ -494,9 +494,6 @@ SDL_VideoInit(const char *driver_name)
     /* Select the proper video driver */
     index = 0;
     video = NULL;
-    if (driver_name == NULL) {
-        driver_name = SDL_getenv("SDL_VIDEODRIVER");
-    }
     if (driver_name != NULL) {
         for (i = 0; bootstrap[i]; ++i) {
             if (SDL_strncasecmp(bootstrap[i]->name, driver_name, SDL_strlen(driver_name)) == 0) {
@@ -3190,11 +3187,6 @@ SDL_GL_ExtensionSupported(const char *extension)
     /* Extension names should not have spaces. */
     where = SDL_strchr(extension, ' ');
     if (where || *extension == '\0') {
-        return SDL_FALSE;
-    }
-    /* See if there's an environment variable override */
-    start = SDL_getenv(extension);
-    if (start && *start == '0') {
         return SDL_FALSE;
     }
 

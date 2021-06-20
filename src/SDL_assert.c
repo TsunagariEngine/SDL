@@ -180,26 +180,6 @@ SDL_PromptAssertion(const SDL_assert_data *data, void *userdata)
 
     debug_print("\n\n%s\n\n", message);
 
-    /* let env. variable override, so unit tests won't block in a GUI. */
-    envr = SDL_getenv("SDL_ASSERT");
-    if (envr != NULL) {
-        SDL_stack_free(message);
-
-        if (SDL_strcmp(envr, "abort") == 0) {
-            return SDL_ASSERTION_ABORT;
-        } else if (SDL_strcmp(envr, "break") == 0) {
-            return SDL_ASSERTION_BREAK;
-        } else if (SDL_strcmp(envr, "retry") == 0) {
-            return SDL_ASSERTION_RETRY;
-        } else if (SDL_strcmp(envr, "ignore") == 0) {
-            return SDL_ASSERTION_IGNORE;
-        } else if (SDL_strcmp(envr, "always_ignore") == 0) {
-            return SDL_ASSERTION_ALWAYS_IGNORE;
-        } else {
-            return SDL_ASSERTION_ABORT;  /* oh well. */
-        }
-    }
-
     /* Leave fullscreen mode, if possible (scary!) */
     window = SDL_GetFocusWindow();
     if (window) {

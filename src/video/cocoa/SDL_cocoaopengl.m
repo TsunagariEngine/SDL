@@ -147,9 +147,6 @@ Cocoa_GL_LoadLibrary(_THIS, const char *path)
 {
     /* Load the OpenGL library */
     if (path == NULL) {
-        path = SDL_getenv("SDL_OPENGL_LIBRARY");
-    }
-    if (path == NULL) {
         path = DEFAULT_OPENGL;
     }
     _this->gl_config.dll_handle = SDL_LoadObject(path);

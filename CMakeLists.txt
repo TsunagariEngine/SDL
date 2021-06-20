@@ -2,7 +2,14 @@ cmake_minimum_required(VERSION 2.8.9...3.19)
 project(SDL2 C)
 #https://cmake.org/cmake/help/v2.8.9/cmake.html
 
-set(UNIVERSAL 1)
+
+#
+# Options
+#
+
+if(APPLE)
+    option(UNIVERSAL "Build an AMD64/ARM64 universal binary")
+endif()
 
 
 #
@@ -68,9 +75,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/audio/SDL_audiotypecvt.c
     ${HERE}/src/audio/SDL_mixer.c
     ${HERE}/src/audio/SDL_wave.c
-    ${HERE}/src/audio/coreaudio/SDL_coreaudio.m
-    ${HERE}/src/core/unix/SDL_poll.c
-    ${HERE}/src/core/unix/SDL_poll.c
     ${HERE}/src/cpuinfo/SDL_cpuinfo.c
     ${HERE}/src/events/SDL_clipboardevents.c
     ${HERE}/src/events/SDL_displayevents.c
@@ -83,7 +87,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/events/SDL_touch.c
     ${HERE}/src/events/SDL_windowevents.c
     ${HERE}/src/file/SDL_rwops.c
-    ${HERE}/src/file/cocoa/SDL_rwopsbundlesupport.m
     ${HERE}/src/libm/e_atan2.c
     ${HERE}/src/libm/e_exp.c
     ${HERE}/src/libm/e_fmod.c
@@ -104,30 +107,15 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/libm/s_scalbn.c
     ${HERE}/src/libm/s_sin.c
     ${HERE}/src/libm/s_tan.c
-    ${HERE}/src/loadso/dlopen/SDL_sysloadso.c
-    ${HERE}/src/power/SDL_power.c
     ${HERE}/src/render/SDL_render.c
-    ${HERE}/src/render/metal/SDL_render_metal.m
-    ${HERE}/src/render/opengl/SDL_render_gl.c
-    ${HERE}/src/render/opengl/SDL_shaders_gl.c
-    ${HERE}/src/sensor/SDL_sensor.c
     ${HERE}/src/stdlib/SDL_crc32.c
-    ${HERE}/src/stdlib/SDL_getenv.c
-    ${HERE}/src/stdlib/SDL_iconv.c
     ${HERE}/src/stdlib/SDL_malloc.c
     ${HERE}/src/stdlib/SDL_qsort.c
     ${HERE}/src/stdlib/SDL_stdlib.c
     ${HERE}/src/stdlib/SDL_string.c
     ${HERE}/src/stdlib/SDL_strtokr.c
     ${HERE}/src/thread/SDL_thread.c
-    ${HERE}/src/thread/pthread/SDL_syscond.c
-    ${HERE}/src/thread/pthread/SDL_sysmutex.c
-    ${HERE}/src/thread/pthread/SDL_syssem.c
-    ${HERE}/src/thread/pthread/SDL_systhread.c
-    ${HERE}/src/thread/pthread/SDL_systls.c
     ${HERE}/src/timer/SDL_timer.c
-    ${HERE}/src/timer/unix/SDL_systimer.c
-    ${HERE}/src/timer/unix/SDL_systimer.c
     ${HERE}/src/video/SDL_bmp.c
     ${HERE}/src/video/SDL_clipboard.c
     ${HERE}/src/video/SDL_fillrect.c
@@ -138,18 +126,38 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/video/SDL_surface.c
     ${HERE}/src/video/SDL_video.c
     ${HERE}/src/video/SDL_yuv.c
-    ${HERE}/src/video/cocoa/SDL_cocoaclipboard.m
-    ${HERE}/src/video/cocoa/SDL_cocoaevents.m
-    ${HERE}/src/video/cocoa/SDL_cocoakeyboard.m
-    ${HERE}/src/video/cocoa/SDL_cocoamessagebox.m
-    ${HERE}/src/video/cocoa/SDL_cocoametalview.m
-    ${HERE}/src/video/cocoa/SDL_cocoamodes.m
-    ${HERE}/src/video/cocoa/SDL_cocoamouse.m
-    ${HERE}/src/video/cocoa/SDL_cocoaopengl.m
-    ${HERE}/src/video/cocoa/SDL_cocoashape.m
-    ${HERE}/src/video/cocoa/SDL_cocoavideo.m
-    ${HERE}/src/video/cocoa/SDL_cocoawindow.m
 )
+
+if(APPLE)
+    set(SDL2_SOURCES ${SDL2_SOURCES}
+        ${HERE}/src/audio/coreaudio/SDL_coreaudio.m
+        ${HERE}/src/core/unix/SDL_poll.c
+        ${HERE}/src/core/unix/SDL_poll.c
+        ${HERE}/src/file/cocoa/SDL_rwopsbundlesupport.m
+        ${HERE}/src/loadso/dlopen/SDL_sysloadso.c
+        ${HERE}/src/render/metal/SDL_render_metal.m
+        ${HERE}/src/render/opengl/SDL_render_gl.c
+        ${HERE}/src/render/opengl/SDL_shaders_gl.c
+        ${HERE}/src/thread/pthread/SDL_syscond.c
+        ${HERE}/src/thread/pthread/SDL_sysmutex.c
+        ${HERE}/src/thread/pthread/SDL_syssem.c
+        ${HERE}/src/thread/pthread/SDL_systhread.c
+        ${HERE}/src/thread/pthread/SDL_systls.c
+        ${HERE}/src/timer/unix/SDL_systimer.c
+        ${HERE}/src/timer/unix/SDL_systimer.c
+        ${HERE}/src/video/cocoa/SDL_cocoaclipboard.m
+        ${HERE}/src/video/cocoa/SDL_cocoaevents.m
+        ${HERE}/src/video/cocoa/SDL_cocoakeyboard.m
+        ${HERE}/src/video/cocoa/SDL_cocoamessagebox.m
+        ${HERE}/src/video/cocoa/SDL_cocoametalview.m
+        ${HERE}/src/video/cocoa/SDL_cocoamodes.m
+        ${HERE}/src/video/cocoa/SDL_cocoamouse.m
+        ${HERE}/src/video/cocoa/SDL_cocoaopengl.m
+        ${HERE}/src/video/cocoa/SDL_cocoashape.m
+        ${HERE}/src/video/cocoa/SDL_cocoavideo.m
+        ${HERE}/src/video/cocoa/SDL_cocoawindow.m
+    )
+endif()
 
 
 #
@@ -292,7 +300,9 @@ if(UNIVERSAL)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch x86_64 -arch arm64")
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mmacosx-version-min=10.11")
+if(APPLE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mmacosx-version-min=10.11")
+endif()
 
 
 #

@@ -967,11 +967,6 @@ SDL_AudioInit(const char *driver_name)
     SDL_zero(current_audio);
     SDL_zeroa(open_devices);
 
-    /* Select the proper audio driver */
-    if (driver_name == NULL) {
-        driver_name = SDL_getenv("SDL_AUDIODRIVER");
-    }
-
     for (i = 0; (!initialized) && (bootstrap[i]); ++i) {
         /* make sure we should even try this driver before doing so... */
         const AudioBootStrap *backend = bootstrap[i];
@@ -1215,27 +1210,16 @@ prepare_audiospec(const SDL_AudioSpec * orig, SDL_AudioSpec * prepared)
     SDL_memcpy(prepared, orig, sizeof(SDL_AudioSpec));
 
     if (orig->freq == 0) {
-        const char *env = SDL_getenv("SDL_AUDIO_FREQUENCY");
-        if ((!env) || ((prepared->freq = SDL_atoi(env)) == 0)) {
-            prepared->freq = 22050;     /* a reasonable default */
-        }
+        prepared->freq = 22050;     /* a reasonable default */
     }
 
     if (orig->format == 0) {
-        const char *env = SDL_getenv("SDL_AUDIO_FORMAT");
-        if ((!env) || ((prepared->format = SDL_ParseAudioFormat(env)) == 0)) {
-            prepared->format = AUDIO_S16;       /* a reasonable default */
-        }
+        prepared->format = AUDIO_S16;       /* a reasonable default */
     }
 
     switch (orig->channels) {
-    case 0:{
-            const char *env = SDL_getenv("SDL_AUDIO_CHANNELS");
-            if ((!env) || ((prepared->channels = (Uint8) SDL_atoi(env)) == 0)) {
-                prepared->channels = 2; /* a reasonable default */
-                break;
-            }
-        }
+    case 0:
+        prepared->channels = 2; /* a reasonable default */
     case 1:                    /* Mono */
     case 2:                    /* Stereo */
     case 4:                    /* Quadrophonic */
@@ -1248,17 +1232,14 @@ prepare_audiospec(const SDL_AudioSpec * orig, SDL_AudioSpec * prepared)
     }
 
     if (orig->samples == 0) {
-        const char *env = SDL_getenv("SDL_AUDIO_SAMPLES");
-        if ((!env) || ((prepared->samples = (Uint16) SDL_atoi(env)) == 0)) {
-            /* Pick a default of ~46 ms at desired frequency */
-            /* !!! FIXME: remove this when the non-Po2 resampling is in. */
-            const int samples = (prepared->freq / 1000) * 46;
-            int power2 = 1;
-            while (power2 < samples) {
-                power2 *= 2;
-            }
-            prepared->samples = power2;
+        /* Pick a default of ~46 ms at desired frequency */
+        /* !!! FIXME: remove this when the non-Po2 resampling is in. */
+        const int samples = (prepared->freq / 1000) * 46;
+        int power2 = 1;
+        while (power2 < samples) {
+            power2 *= 2;
         }
+        prepared->samples = power2;
     }
 
     /* Calculate the silence and size of the audio specification */
@@ -1308,11 +1289,6 @@ open_audio_device(const char *devname, int iscapture,
     }
     if (!prepare_audiospec(desired, obtained)) {
         return 0;
-    }
-
-    /* If app doesn't care about a specific device, let the user override. */
-    if (devname == NULL) {
-        devname = SDL_getenv("SDL_AUDIO_DEVICE_NAME");
     }
 
     /*

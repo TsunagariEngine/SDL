@@ -48,16 +48,10 @@ SDL_bool
 SDL_SetHintWithPriority(const char *name, const char *value,
                         SDL_HintPriority priority)
 {
-    const char *env;
     SDL_Hint *hint;
     SDL_HintWatch *entry;
 
     if (!name || !value) {
-        return SDL_FALSE;
-    }
-
-    env = SDL_getenv(name);
-    if (env && priority < SDL_HINT_OVERRIDE) {
         return SDL_FALSE;
     }
 
@@ -104,19 +98,14 @@ SDL_SetHint(const char *name, const char *value)
 const char *
 SDL_GetHint(const char *name)
 {
-    const char *env;
     SDL_Hint *hint;
 
-    env = SDL_getenv(name);
     for (hint = SDL_hints; hint; hint = hint->next) {
         if (SDL_strcmp(name, hint->name) == 0) {
-            if (!env || hint->priority == SDL_HINT_OVERRIDE) {
-                return hint->value;
-            }
-            break;
+            return hint->value;
         }
     }
-    return env;
+    return 0;
 }
 
 SDL_bool
