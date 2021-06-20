@@ -106,10 +106,6 @@ UIKit_CreateDevice(int devindex)
         device->SetTextInputRect = UIKit_SetTextInputRect;
 #endif
 
-        device->SetClipboardText = UIKit_SetClipboardText;
-        device->GetClipboardText = UIKit_GetClipboardText;
-        device->HasClipboardText = UIKit_HasClipboardText;
-
         /* OpenGL (ES) functions */
 #if SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
         device->GL_MakeCurrent      = UIKit_GL_MakeCurrent;

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.UiModeManager;
-import android.content.ClipboardManager;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -108,7 +107,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     protected static View mTextEdit;
     protected static boolean mScreenKeyboardShown;
     protected static ViewGroup mLayout;
-    protected static SDLClipboardHandler mClipboardHandler;
     protected static Hashtable<Integer, PointerIcon> mCursors;
     protected static int mLastCursorID;
     protected static SDLGenericMotionListener_API12 mMotionListener;
@@ -198,7 +196,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         mSurface = null;
         mTextEdit = null;
         mLayout = null;
-        mClipboardHandler = null;
         mCursors = new Hashtable<Integer, PointerIcon>();
         mLastCursorID = 0;
         mSDLThread = null;
@@ -269,8 +266,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         // So we can call stuff from static callbacks
         mSingleton = this;
         SDL.setContext(this);
-
-        mClipboardHandler = new SDLClipboardHandler();
 
         mHIDDeviceManager = HIDDeviceManager.acquire(this);
 
@@ -796,7 +791,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                                             int action, float x,
                                             float y, float p);
     public static native void onNativeAccel(float x, float y, float z);
-    public static native void onNativeClipboardChanged();
     public static native void onNativeSurfaceCreated();
     public static native void onNativeSurfaceChanged();
     public static native void onNativeSurfaceDestroyed();
@@ -1434,27 +1428,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             }
 
         }
-    }
-
-    /**
-     * This method is called by SDL using JNI.
-     */
-    public static boolean clipboardHasText() {
-        return mClipboardHandler.clipboardHasText();
-    }
-
-    /**
-     * This method is called by SDL using JNI.
-     */
-    public static String clipboardGetText() {
-        return mClipboardHandler.clipboardGetText();
-    }
-
-    /**
-     * This method is called by SDL using JNI.
-     */
-    public static void clipboardSetText(String string) {
-        mClipboardHandler.clipboardSetText(string);
     }
 
     /**
@@ -2266,47 +2239,6 @@ class SDLInputConnection extends BaseInputConnection {
         }
 
         return super.deleteSurroundingText(beforeLength, afterLength);
-    }
-}
-
-class SDLClipboardHandler implements
-    ClipboardManager.OnPrimaryClipChangedListener {
-
-    protected ClipboardManager mClipMgr;
-
-    SDLClipboardHandler() {
-       mClipMgr = (ClipboardManager) SDL.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-       mClipMgr.addPrimaryClipChangedListener(this);
-    }
-
-    public boolean clipboardHasText() {
-       return mClipMgr.hasPrimaryClip();
-    }
-
-    public String clipboardGetText() {
-        ClipData clip = mClipMgr.getPrimaryClip();
-        if (clip != null) {
-            ClipData.Item item = clip.getItemAt(0);
-            if (item != null) {
-                CharSequence text = item.getText();
-                if (text != null) {
-                    return text.toString();
-                }
-            }
-        }
-        return null;
-    }
-
-    public void clipboardSetText(String string) {
-       mClipMgr.removePrimaryClipChangedListener(this);
-       ClipData clip = ClipData.newPlainText(null, string);
-       mClipMgr.setPrimaryClip(clip);
-       mClipMgr.addPrimaryClipChangedListener(this);
-    }
-
-    @Override
-    public void onPrimaryClipChanged() {
-        SDLActivity.onNativeClipboardChanged();
     }
 }
 

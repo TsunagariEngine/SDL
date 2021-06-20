@@ -32,7 +32,6 @@
 #include "SDL_keycode.h"
 #include "../SDL_sysvideo.h"
 
-#include "SDL_cocoaclipboard.h"
 #include "SDL_cocoaevents.h"
 #include "SDL_cocoakeyboard.h"
 #include "SDL_cocoamodes.h"
@@ -103,7 +102,6 @@ typedef struct SDL_VideoData
     unsigned int modifierFlags;
     void *key_layout;
     SDLTranslatorResponder *fieldEdit;
-    NSInteger clipboard_count;
     Uint32 screensaver_activity;
     BOOL screensaver_use_iopm;
     IOPMAssertionID screensaver_assertion;

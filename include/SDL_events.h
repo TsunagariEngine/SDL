@@ -140,15 +140,6 @@ typedef enum
     SDL_DOLLARRECORD,
     SDL_MULTIGESTURE,
 
-    /* Clipboard events */
-    SDL_CLIPBOARDUPDATE = 0x900, /**< The clipboard changed */
-
-    /* Drag and drop events */
-    SDL_DROPFILE        = 0x1000, /**< The system requests a file open */
-    SDL_DROPTEXT,                 /**< text/plain drag-and-drop event */
-    SDL_DROPBEGIN,                /**< A new set of drops is beginning (NULL filename) */
-    SDL_DROPCOMPLETE,             /**< Current set of drops is now complete (NULL filename) */
-
     /* Audio hotplug events */
     SDL_AUDIODEVICEADDED = 0x1100, /**< A new audio device is available */
     SDL_AUDIODEVICEREMOVED,        /**< An audio device has been removed. */

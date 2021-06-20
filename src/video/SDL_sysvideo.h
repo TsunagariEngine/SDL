@@ -309,11 +309,6 @@ struct SDL_VideoDevice
     void (*HideScreenKeyboard) (_THIS, SDL_Window *window);
     SDL_bool (*IsScreenKeyboardShown) (_THIS, SDL_Window *window);
 
-    /* Clipboard */
-    int (*SetClipboardText) (_THIS, const char *text);
-    char * (*GetClipboardText) (_THIS);
-    SDL_bool (*HasClipboardText) (_THIS);
-
     /* MessageBox */
     int (*ShowMessageBox) (_THIS, const SDL_MessageBoxData *messageboxdata, int *buttonid);
 

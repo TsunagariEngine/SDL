@@ -214,10 +214,6 @@ WIN_CreateDevice(int devindex)
     device->StopTextInput = WIN_StopTextInput;
     device->SetTextInputRect = WIN_SetTextInputRect;
 
-    device->SetClipboardText = WIN_SetClipboardText;
-    device->GetClipboardText = WIN_GetClipboardText;
-    device->HasClipboardText = WIN_HasClipboardText;
-
     device->free = WIN_DeleteDevice;
 
     return device;

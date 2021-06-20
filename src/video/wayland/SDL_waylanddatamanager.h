@@ -51,15 +51,6 @@ typedef struct {
 typedef struct {
     struct wl_data_device *data_device;
     SDL_VideoData *video_data;
-
-    /* Drag and Drop */
-    uint32_t drag_serial;
-    SDL_WaylandDataOffer *drag_offer;
-    SDL_WaylandDataOffer *selection_offer;
-
-    /* Clipboard */
-    uint32_t selection_serial;
-    SDL_WaylandDataSource *selection_source;
 } SDL_WaylandDataDevice;
 
 extern const char* Wayland_convert_mime_type(const char *mime_type);
@@ -90,13 +81,6 @@ extern SDL_bool Wayland_data_offer_has_mime(SDL_WaylandDataOffer *offer,
 extern int Wayland_data_offer_add_mime(SDL_WaylandDataOffer *offer,
                                        const char *mime_type);
 extern void Wayland_data_offer_destroy(SDL_WaylandDataOffer *offer);
-
-/* Clipboard */
-extern int Wayland_data_device_clear_selection(SDL_WaylandDataDevice *device);
-extern int Wayland_data_device_set_selection(SDL_WaylandDataDevice *device,
-                                             SDL_WaylandDataSource *source);
-extern int Wayland_data_device_set_serial(SDL_WaylandDataDevice *device,
-                                          uint32_t serial);
 #endif /* SDL_waylanddatamanager_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

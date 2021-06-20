@@ -1197,8 +1197,6 @@ data_device_handle_selection(void *data, struct wl_data_device *wl_data_device,
         Wayland_data_offer_destroy(data_device->selection_offer);
         data_device->selection_offer = offer;
     }
-
-    SDL_SendClipboardUpdate();
 }
 
 static const struct wl_data_device_listener data_device_listener = {

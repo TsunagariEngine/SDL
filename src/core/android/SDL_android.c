@@ -120,9 +120,6 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(onNativeAccel)(
         JNIEnv *env, jclass jcls,
         jfloat x, jfloat y, jfloat z);
 
-JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(onNativeClipboardChanged)(
-        JNIEnv *env, jclass jcls);
-
 JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(nativeLowMemory)(
         JNIEnv *env, jclass cls);
 
@@ -180,7 +177,6 @@ static JNINativeMethod SDLActivity_tab[] = {
     { "onNativeTouch",              "(IIIFFF)V", SDL_JAVA_INTERFACE(onNativeTouch) },
     { "onNativeMouse",              "(IIFFZ)V", SDL_JAVA_INTERFACE(onNativeMouse) },
     { "onNativeAccel",              "(FFF)V", SDL_JAVA_INTERFACE(onNativeAccel) },
-    { "onNativeClipboardChanged",   "()V", SDL_JAVA_INTERFACE(onNativeClipboardChanged) },
     { "nativeLowMemory",            "()V", SDL_JAVA_INTERFACE(nativeLowMemory) },
     { "onNativeLocaleChanged",      "()V", SDL_JAVA_INTERFACE(onNativeLocaleChanged) },
     { "nativeSendQuit",             "()V", SDL_JAVA_INTERFACE(nativeSendQuit) },
@@ -294,9 +290,6 @@ static JavaVM *mJavaVM = NULL;
 static jclass mActivityClass;
 
 /* method signatures */
-static jmethodID midClipboardGetText;
-static jmethodID midClipboardHasText;
-static jmethodID midClipboardSetText;
 static jmethodID midCreateCustomCursor;
 static jmethodID midGetContext;
 static jmethodID midGetDisplayDPI;
@@ -573,9 +566,6 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(nativeSetupJNI)(JNIEnv *env, jclass cl
 
     mActivityClass = (jclass)((*env)->NewGlobalRef(env, cls));
 
-    midClipboardGetText = (*env)->GetStaticMethodID(env, mActivityClass, "clipboardGetText", "()Ljava/lang/String;");
-    midClipboardHasText = (*env)->GetStaticMethodID(env, mActivityClass, "clipboardHasText", "()Z");
-    midClipboardSetText = (*env)->GetStaticMethodID(env, mActivityClass, "clipboardSetText", "(Ljava/lang/String;)V");
     midCreateCustomCursor = (*env)->GetStaticMethodID(env, mActivityClass, "createCustomCursor", "([IIIII)I");
     midGetContext = (*env)->GetStaticMethodID(env, mActivityClass, "getContext","()Landroid/content/Context;");
     midGetDisplayDPI = (*env)->GetStaticMethodID(env, mActivityClass, "getDisplayDPI", "()Landroid/util/DisplayMetrics;");
@@ -603,10 +593,7 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(nativeSetupJNI)(JNIEnv *env, jclass cl
     midShowTextInput =  (*env)->GetStaticMethodID(env, mActivityClass, "showTextInput", "(IIII)Z");
     midSupportsRelativeMouse = (*env)->GetStaticMethodID(env, mActivityClass, "supportsRelativeMouse", "()Z");
 
-    if (!midClipboardGetText ||
-        !midClipboardHasText ||
-        !midClipboardSetText ||
-        !midCreateCustomCursor ||
+    if (!midCreateCustomCursor ||
         !midGetContext ||
         !midGetDisplayDPI ||
         !midGetManifestEnvironmentVariables ||
@@ -1129,13 +1116,6 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(onNativeAccel)(
     fLastAccelerometer[1] = y;
     fLastAccelerometer[2] = z;
     bHasNewData = SDL_TRUE;
-}
-
-/* Clipboard */
-JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(onNativeClipboardChanged)(
-                                    JNIEnv *env, jclass jcls)
-{
-    SDL_SendClipboardUpdate();
 }
 
 /* Low memory */
@@ -1914,41 +1894,6 @@ int Android_JNI_FileClose(SDL_RWops *ctx)
     AAsset *asset = (AAsset*) ctx->hidden.androidio.asset;
     AAsset_close(asset);
     return 0;
-}
-
-int Android_JNI_SetClipboardText(const char *text)
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    jstring string = (*env)->NewStringUTF(env, text);
-    (*env)->CallStaticVoidMethod(env, mActivityClass, midClipboardSetText, string);
-    (*env)->DeleteLocalRef(env, string);
-    return 0;
-}
-
-char* Android_JNI_GetClipboardText(void)
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    char *text = NULL;
-    jstring string;
-
-    string = (*env)->CallStaticObjectMethod(env, mActivityClass, midClipboardGetText);
-    if (string) {
-        const char *utf = (*env)->GetStringUTFChars(env, string, 0);
-        if (utf) {
-            text = SDL_strdup(utf);
-            (*env)->ReleaseStringUTFChars(env, string, utf);
-        }
-        (*env)->DeleteLocalRef(env, string);
-    }
-
-    return (text == NULL) ? SDL_strdup("") : text;
-}
-
-SDL_bool Android_JNI_HasClipboardText(void)
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    jboolean retval = (*env)->CallStaticBooleanMethod(env, mActivityClass, midClipboardHasText);
-    return (retval == JNI_TRUE) ? SDL_TRUE : SDL_FALSE;
 }
 
 /* returns 0 on success or -1 on error (others undefined then)

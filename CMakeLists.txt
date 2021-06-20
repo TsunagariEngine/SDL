@@ -76,7 +76,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/audio/SDL_mixer.c
     ${HERE}/src/audio/SDL_wave.c
     ${HERE}/src/cpuinfo/SDL_cpuinfo.c
-    ${HERE}/src/events/SDL_clipboardevents.c
     ${HERE}/src/events/SDL_displayevents.c
     ${HERE}/src/events/SDL_events.c
     ${HERE}/src/events/SDL_keyboard.c
@@ -120,7 +119,6 @@ if(APPLE)
         ${HERE}/src/thread/pthread/SDL_systls.c
         ${HERE}/src/timer/unix/SDL_systimer.c
         ${HERE}/src/timer/unix/SDL_systimer.c
-        ${HERE}/src/video/cocoa/SDL_cocoaclipboard.m
         ${HERE}/src/video/cocoa/SDL_cocoaevents.m
         ${HERE}/src/video/cocoa/SDL_cocoakeyboard.m
         ${HERE}/src/video/cocoa/SDL_cocoamessagebox.m

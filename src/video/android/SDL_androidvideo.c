@@ -157,11 +157,6 @@ Android_CreateDevice(int devindex)
     device->HasScreenKeyboardSupport = Android_HasScreenKeyboardSupport;
     device->IsScreenKeyboardShown = Android_IsScreenKeyboardShown;
 
-    /* Clipboard */
-    device->SetClipboardText = Android_SetClipboardText;
-    device->GetClipboardText = Android_GetClipboardText;
-    device->HasClipboardText = Android_HasClipboardText;
-
     return device;
 }
 

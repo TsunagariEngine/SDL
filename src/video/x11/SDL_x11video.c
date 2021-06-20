@@ -288,9 +288,6 @@ X11_CreateDevice(int devindex)
 #endif
 #endif
 
-    device->SetClipboardText = X11_SetClipboardText;
-    device->GetClipboardText = X11_GetClipboardText;
-    device->HasClipboardText = X11_HasClipboardText;
     device->StartTextInput = X11_StartTextInput;
     device->StopTextInput = X11_StopTextInput;
     device->SetTextInputRect = X11_SetTextInputRect;

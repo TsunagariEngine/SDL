@@ -76,11 +76,6 @@ int Android_JNI_FileClose(SDL_RWops* ctx);
 /* Environment support */
 void Android_JNI_GetManifestEnvironmentVariables(void);
 
-/* Clipboard support */
-int Android_JNI_SetClipboardText(const char* text);
-char* Android_JNI_GetClipboardText(void);
-SDL_bool Android_JNI_HasClipboardText(void);
-
 /* Power support */
 int Android_JNI_GetPowerInfo(int* plugged, int* charged, int* battery, int* seconds, int* percent);
 

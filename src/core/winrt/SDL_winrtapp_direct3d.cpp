@@ -633,12 +633,6 @@ void SDL_WinRTApp::OnWindowActivated(CoreWindow^ sender, WindowActivatedEventArg
             /* TODO, WinRT: see if the Win32 bugfix from https://hg.libsdl.org/SDL/rev/d278747da408 needs to be applied (on window activation) */
             //WIN_CheckAsyncMouseRelease(data);
 
-            /* TODO, WinRT: implement clipboard support, if possible */
-            ///*
-            // * FIXME: Update keyboard state
-            // */
-            //WIN_CheckClipboardUpdate(data->videodata);
-
             // HACK: Resetting the mouse-cursor here seems to fix
             // https://bugzilla.libsdl.org/show_bug.cgi?id=3217, whereby a
             // WinRT app's mouse cursor may switch to Windows' 'wait' cursor,

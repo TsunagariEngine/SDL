@@ -1635,9 +1635,6 @@ SDLTest_PrintEvent(SDL_Event * event)
             event->cbutton.which, event->cbutton.button,
             ControllerButtonName((SDL_GameControllerButton)event->cbutton.button));
         break;
-    case SDL_CLIPBOARDUPDATE:
-        SDL_Log("SDL EVENT: Clipboard updated");
-        break;
 
     case SDL_FINGERMOTION:
         SDL_Log("SDL EVENT: Finger: motion touch=%ld, finger=%ld, x=%f, y=%f, dx=%f, dy=%f, pressure=%f",
@@ -1912,11 +1909,6 @@ SDLTest_CommonEvent(SDLTest_CommonState * state, SDL_Event * event, int *done)
             break;
 
         case SDLK_c:
-            if (withControl) {
-                /* Ctrl-C copy awesome text! */
-                SDL_SetClipboardText("SDL rocks!\nYou know it!");
-                printf("Copied text to clipboard\n");
-            }
             if (withAlt) {
                 /* Alt-C toggle a render clip rectangle */
                 for (i = 0; i < state->num_windows; ++i) {
@@ -1944,18 +1936,6 @@ SDLTest_CommonEvent(SDLTest_CommonState * state, SDL_Event * event, int *done)
                     const int rc = SDL_CaptureMouse(shouldCapture);
                     SDL_Log("%sapturing mouse %s!\n", shouldCapture ? "C" : "Unc", (rc == 0) ? "succeeded" : "failed");
                 }
-            }
-            break;
-        case SDLK_v:
-            if (withControl) {
-                /* Ctrl-V paste awesome text! */
-                char *text = SDL_GetClipboardText();
-                if (*text) {
-                    printf("Clipboard: %s\n", text);
-                } else {
-                    printf("Clipboard is empty\n");
-                }
-                SDL_free(text);
             }
             break;
         case SDLK_g:

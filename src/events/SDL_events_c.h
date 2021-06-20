@@ -29,7 +29,6 @@
 #include "SDL_thread.h"
 #include "../video/SDL_sysvideo.h"
 
-#include "SDL_clipboardevents_c.h"
 #include "SDL_displayevents_c.h"
 #include "SDL_dropevents_c.h"
 #include "SDL_gesture_c.h"
