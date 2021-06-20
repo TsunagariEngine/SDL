@@ -27,6 +27,7 @@
 /* This file contains portable string manipulation functions for SDL */
 
 #include "SDL_stdinc.h"
+#include <stdio.h>
 
 #if !defined(HAVE_VSSCANF) || !defined(HAVE_STRTOL) || !defined(HAVE_STRTOUL)  || !defined(HAVE_STRTOLL) || !defined(HAVE_STRTOULL) || !defined(HAVE_STRTOD)
 #define SDL_isupperhex(X)   (((X) >= 'A') && ((X) <= 'F'))
