@@ -121,7 +121,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/video/SDL_pixels.c
     ${HERE}/src/video/SDL_rect.c
     ${HERE}/src/video/SDL_shape.c
-    ${HERE}/src/video/SDL_stretch.c
     ${HERE}/src/video/SDL_surface.c
     ${HERE}/src/video/SDL_video.c
     ${HERE}/src/video/SDL_yuv.c
