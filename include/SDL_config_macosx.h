@@ -57,10 +57,6 @@
 #define HAVE_REALLOC    1
 #define HAVE_FREE   1
 #define HAVE_ALLOCA 1
-#define HAVE_GETENV 1
-#define HAVE_SETENV 1
-#define HAVE_PUTENV 1
-#define HAVE_UNSETENV   1
 #define HAVE_QSORT  1
 #define HAVE_ABS    1
 #define HAVE_BCOPY  1
@@ -196,5 +192,13 @@
 #ifdef __ppc__
 #define SDL_ALTIVEC_BLITTERS    1
 #endif
+
+#define SDL_JOYSTICK_DISABLED 1
+#define SDL_HAPTIC_DISABLED 1
+#define SDL_GAMECONTROLLER_DISABLED 1
+#define SDL_SENSOR_DISABLED 1
+#define SDL_POWER_DISABLED 1
+//#define SDL_LOADSO_DISABLED 1  // Can we do this?
+#define SDL_FILESYSTEM_DISABLED 1
 
 #endif /* SDL_config_macosx_h_ */
