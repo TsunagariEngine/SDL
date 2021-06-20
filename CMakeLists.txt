@@ -7,14 +7,22 @@ project(SDL2 C)
 # Options
 #
 
+option(OPENGL "Build with the OpenGL window")
+
 if(APPLE)
     option(UNIVERSAL "Build an AMD64/ARM64 universal binary")
+    option(CA "Build with CoreAudio")
+    option(METAL "Build with the Metal window and renderer")
 endif()
 
 
 #
 # Variables
 #
+
+if(CA)
+    set(AUDIO 1)
+endif()
 
 # Project generator
 if(CMAKE_GENERATOR MATCHES Ninja)
@@ -70,11 +78,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/SDL_log.c
     ${HERE}/src/atomic/SDL_atomic.c
     ${HERE}/src/atomic/SDL_spinlock.c
-    ${HERE}/src/audio/SDL_audio.c
-    ${HERE}/src/audio/SDL_audiocvt.c
-    ${HERE}/src/audio/SDL_audiotypecvt.c
-    ${HERE}/src/audio/SDL_mixer.c
-    ${HERE}/src/audio/SDL_wave.c
     ${HERE}/src/cpuinfo/SDL_cpuinfo.c
     ${HERE}/src/events/SDL_displayevents.c
     ${HERE}/src/events/SDL_events.c
@@ -102,15 +105,21 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/video/SDL_yuv.c
 )
 
+if(AUDIO)
+    set(SDL2_SOURCES ${SDL2_SOURCES}
+        ${HERE}/src/audio/SDL_audio.c
+        ${HERE}/src/audio/SDL_audiocvt.c
+        ${HERE}/src/audio/SDL_audiotypecvt.c
+        ${HERE}/src/audio/SDL_mixer.c
+        ${HERE}/src/audio/SDL_wave.c
+    )
+endif()
+
 if(APPLE)
     set(SDL2_SOURCES ${SDL2_SOURCES}
-        ${HERE}/src/audio/coreaudio/SDL_coreaudio.m
         ${HERE}/src/core/unix/SDL_poll.c
         ${HERE}/src/core/unix/SDL_poll.c
         ${HERE}/src/loadso/dlopen/SDL_sysloadso.c
-        ${HERE}/src/render/metal/SDL_render_metal.m
-        ${HERE}/src/render/opengl/SDL_render_gl.c
-        ${HERE}/src/render/opengl/SDL_shaders_gl.c
         ${HERE}/src/thread/pthread/SDL_syscond.c
         ${HERE}/src/thread/pthread/SDL_sysmutex.c
         ${HERE}/src/thread/pthread/SDL_syssem.c
@@ -121,13 +130,32 @@ if(APPLE)
         ${HERE}/src/video/cocoa/SDL_cocoaevents.m
         ${HERE}/src/video/cocoa/SDL_cocoakeyboard.m
         ${HERE}/src/video/cocoa/SDL_cocoamessagebox.m
-        ${HERE}/src/video/cocoa/SDL_cocoametalview.m
         ${HERE}/src/video/cocoa/SDL_cocoamodes.m
         ${HERE}/src/video/cocoa/SDL_cocoamouse.m
-        ${HERE}/src/video/cocoa/SDL_cocoaopengl.m
         ${HERE}/src/video/cocoa/SDL_cocoashape.m
         ${HERE}/src/video/cocoa/SDL_cocoavideo.m
         ${HERE}/src/video/cocoa/SDL_cocoawindow.m
+    )
+endif()
+
+if(CA)
+    set(SDL2_SOURCES ${SDL2_SOURCES}
+        ${HERE}/src/audio/coreaudio/SDL_coreaudio.m
+    )
+endif()
+
+if(APPLE AND OPENGL)
+    set(SDL2_SOURCES ${SDL2_SOURCES}
+        #${HERE}/src/render/opengl/SDL_render_gl.c
+        #${HERE}/src/render/opengl/SDL_shaders_gl.c
+        ${HERE}/src/video/cocoa/SDL_cocoaopengl.m
+    )
+endif()
+
+if(METAL)
+    set(SDL2_SOURCES ${SDL2_SOURCES}
+        ${HERE}/src/render/metal/SDL_render_metal.m
+        ${HERE}/src/video/cocoa/SDL_cocoametalview.m
     )
 endif()
 
@@ -157,17 +185,25 @@ endif()
 # Preprocessor definitions
 #
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -D_THREAD_SAFE -x objective-c -DHAVE_GCC_ATOMICS=1 -DSDL_ASSEMBLY_ROUTINES=1 -DSDL_AUDIO_DRIVER_COREAUDIO=1 -DSDL_DYNAMIC_API=0 -DSDL_LEAN_AND_MEAN=1 -DSDL_LOADSO_DLOPEN=1 -DSDL_TIMER_UNIX=1 -DSDL_VIDEO_DRIVER_COCOA=1 -DSDL_VIDEO_METAL=1 -DSDL_VIDEO_OPENGL=1 -DSDL_VIDEO_OPENGL_CGL=1 -DSDL_VIDEO_RENDER_OGL=1")
+if(APPLE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -D_THREAD_SAFE -x objective-c -DHAVE_GCC_ATOMICS=1 -DSDL_ASSEMBLY_ROUTINES=1 -DSDL_DYNAMIC_API=0 -DSDL_LEAN_AND_MEAN=1 -DSDL_LOADSO_DLOPEN=1 -DSDL_TIMER_UNIX=1 -DSDL_VIDEO_DRIVER_COCOA=1")
+endif()
 
-#EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,CoreAudio -Wl,-framework,AudioToolbox"
-#EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lobjc"
-#EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,CoreVideo"
-#EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,Cocoa"
-#EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,Carbon"
-#EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,IOKit"
-#if metal
-#EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-weak_framework,QuartzCore -Wl,-weak_framework,Metal"
-#endif
+if(APPLE AND OPENGL)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTSU_OPENGL")
+endif()
+
+if(METAL)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTSU_METAL")
+endif()
+
+if(NOT AUDIO)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSDL_AUDIO_DISABLED=1")
+endif()
+
+if(CA)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSDL_AUDIO_DRIVER_COREAUDIO=1")
+endif()
 
 
 #

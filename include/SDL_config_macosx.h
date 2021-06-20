@@ -150,17 +150,20 @@
 /* Enable various video drivers */
 #define SDL_VIDEO_DRIVER_COCOA  1
 
-#ifndef SDL_VIDEO_RENDER_OGL
-#define SDL_VIDEO_RENDER_OGL    1
-#endif
+//#ifndef SDL_VIDEO_RENDER_OGL
+//#define SDL_VIDEO_RENDER_OGL    1
+//#endif
 
 /* Metal only supported on 64-bit architectures with 10.11+ */
+#ifdef TSU_METAL
 #if TARGET_RT_64_BIT && (MAC_OS_X_VERSION_MAX_ALLOWED >= 101100)
 #define SDL_PLATFORM_SUPPORTS_METAL    1
 #else
 #define SDL_PLATFORM_SUPPORTS_METAL    0
 #endif
+#endif
 
+#ifdef TSU_METAL
 #ifndef SDL_VIDEO_RENDER_METAL
 #if SDL_PLATFORM_SUPPORTS_METAL
 #define SDL_VIDEO_RENDER_METAL    1
@@ -168,21 +171,26 @@
 #define SDL_VIDEO_RENDER_METAL    0
 #endif
 #endif
+#endif
 
 /* Enable OpenGL support */
+#ifdef TSU_OPENGL
 #ifndef SDL_VIDEO_OPENGL
 #define SDL_VIDEO_OPENGL    1
 #endif
 #ifndef SDL_VIDEO_OPENGL_CGL
 #define SDL_VIDEO_OPENGL_CGL    1
 #endif
+#endif
 
-/* Enable Vulkan and Metal support */
+/* Enable Metal support */
+#ifdef TSU_METAL
 #ifndef SDL_VIDEO_METAL
 #if SDL_PLATFORM_SUPPORTS_METAL
 #define SDL_VIDEO_METAL 1
 #else
 #define SDL_VIDEO_METAL 0
+#endif
 #endif
 #endif
 
