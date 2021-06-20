@@ -87,26 +87,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/events/SDL_touch.c
     ${HERE}/src/events/SDL_windowevents.c
     ${HERE}/src/file/SDL_rwops.c
-    ${HERE}/src/libm/e_atan2.c
-    ${HERE}/src/libm/e_exp.c
-    ${HERE}/src/libm/e_fmod.c
-    ${HERE}/src/libm/e_log.c
-    ${HERE}/src/libm/e_log10.c
-    ${HERE}/src/libm/e_pow.c
-    ${HERE}/src/libm/e_rem_pio2.c
-    ${HERE}/src/libm/e_sqrt.c
-    ${HERE}/src/libm/k_cos.c
-    ${HERE}/src/libm/k_rem_pio2.c
-    ${HERE}/src/libm/k_sin.c
-    ${HERE}/src/libm/k_tan.c
-    ${HERE}/src/libm/s_atan.c
-    ${HERE}/src/libm/s_copysign.c
-    ${HERE}/src/libm/s_cos.c
-    ${HERE}/src/libm/s_fabs.c
-    ${HERE}/src/libm/s_floor.c
-    ${HERE}/src/libm/s_scalbn.c
-    ${HERE}/src/libm/s_sin.c
-    ${HERE}/src/libm/s_tan.c
     ${HERE}/src/render/SDL_render.c
     ${HERE}/src/stdlib/SDL_crc32.c
     ${HERE}/src/stdlib/SDL_malloc.c
