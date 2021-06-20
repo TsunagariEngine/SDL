@@ -117,7 +117,6 @@ set(SDL2_SOURCES ${SDL2_SOURCES}
     ${HERE}/src/thread/SDL_thread.c
     ${HERE}/src/timer/SDL_timer.c
     ${HERE}/src/video/SDL_bmp.c
-    ${HERE}/src/video/SDL_clipboard.c
     ${HERE}/src/video/SDL_fillrect.c
     ${HERE}/src/video/SDL_pixels.c
     ${HERE}/src/video/SDL_rect.c
